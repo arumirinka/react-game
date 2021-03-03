@@ -11,3 +11,23 @@
 .moves__wrapper {
   margin-bottom: 5px;
 }
+
+button {
+  border: 1px solid #644444;
+  padding: 1px 5px;
+  margin: 0 3px;
+  background: #faebd7;
+  transition: background 0.2s;
+}
+
+.btn--active,
+button:active {
+  background-color: #e9967a;
+  transition: background 0.2s;
+}
+
+button:hover {
+  cursor: pointer;
+  background-color: #f0bdac;
+  transition: background 0.2s;
+}

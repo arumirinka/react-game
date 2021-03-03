@@ -7,6 +7,7 @@ import createCardsArray from './utils/createCardsArray';
 import Footer from './components/Footer/Footer';
 import Settings from './components/Settings/Settings';
 import Message from './components/Message/Message';
+import GameInfo from './components/GameInfo/GameInfo';
 
 let audioPath = '';
 const musicPath = '../../audio/music.mp3';
@@ -20,6 +21,7 @@ function App() {
   const [isBoardDisabled, setIsBoardDisabled] = useState(false);
   const [isGameWon, setIsGameWon] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isGameInfoOpen, setIsGameInfoOpen] = useState(false);
   const [isSecondBackStyle, setIsSecondBackStyle] = useState(false);
   const [isSecondDeck, setIsSecondDeck] = useState(false);
   const [isDelay2s, setIsDelay2s] = useState(false);
@@ -130,6 +132,10 @@ function App() {
     setIsSettingsOpen(!isSettingsOpen);
   };
 
+  const toggleGameInfo = () => {
+    setIsGameInfoOpen(!isGameInfoOpen);
+  };
+
   const handleFullscreenClick = () => {
     setIsFullscreen(!isFullscreen);
   };
@@ -162,6 +168,31 @@ function App() {
     setSoundsVolume(sVolume);
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'n' || event.key === 'N') {
+      newGame();
+    }
+    if (event.key === 's' || event.key === 'S') {
+      toggleSettings();
+    }
+    if (event.key === 'f' || event.key === 'F') {
+      handleFullscreenClick();
+    }
+    if (event.key === 'm' || event.key === 'M') {
+      setIsMusicOn(false);
+    }
+    if (event.key === 'j' || event.key === 'J') {
+      setIsSoundsOn(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keypress', handleKeyPress);
+    return () => {
+      window.removeEventListener('keypress', handleKeyPress);
+    };
+  }, []);
+
   return (
     <div className="App">
       {isSettingsOpen ? (
@@ -184,7 +215,8 @@ function App() {
         />
       ) : null}
       {isGameWon ? <Message moves={movesCounter} /> : null}
-      <div className={`${isSettingsOpen || isGameWon ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
+      {isGameInfoOpen ? <GameInfo toggleGameInfo={toggleGameInfo} /> : null}
+      <div className={`${isSettingsOpen || isGameWon || isGameInfoOpen ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
         <Board
           cardsArray={cardsArray}
           flippedPair={flippedPair}
@@ -199,8 +231,25 @@ function App() {
       </div>
       <div>
         <button type="button" onClick={newGame}>New game</button>
-        <button type="button" onClick={toggleSettings}>Settings</button>
-        <button type="button" onClick={handleFullscreenClick}>
+        <button
+          type="button"
+          onClick={toggleSettings}
+          className={`${isSettingsOpen ? 'btn--active' : ''}`}
+        >
+          Settings
+        </button>
+        <button
+          type="button"
+          onClick={toggleGameInfo}
+          className={`${isGameInfoOpen ? 'btn--active' : ''}`}
+        >
+          HotKeys
+        </button>
+        <button
+          type="button"
+          onClick={handleFullscreenClick}
+          className={`${isFullscreen ? 'btn--active' : ''}`}
+        >
           {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
         </button>
       </div>
