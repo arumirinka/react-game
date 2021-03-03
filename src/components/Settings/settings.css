@@ -7,11 +7,15 @@
   background: #faebd7;
 }
 
+.settings__item {
+  margin: 5px 0;
+}
+
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 26px;
+  width: 46px;
+  height: 22px;
   margin: 0 2px;
 }
 
@@ -37,8 +41,8 @@
 .switch-slider:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
+  height: 14px;
+  width: 14px;
   border-radius: 50%;
   left: 4px;
   bottom: 4px;
@@ -59,4 +63,8 @@ input:checked + .switch-slider:before {
   -webkit-transform: translateX(24px);
   -ms-transform: translateX(24px);
   transform: translateX(24px);
+}
+
+.settings__back-btn {
+  margin-top: 16px;
 }

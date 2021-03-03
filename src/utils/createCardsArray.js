@@ -16,6 +16,13 @@ const cardsArray = [...cards].concat(cards).sort().map((imgTitle, i) => ({
   imgTitle,
 }));
 
-const createCardsArray = () => shuffle(cardsArray);
+const cards1 = ['cloud', 'lightning', 'moon', 'rain', 'rainbow', 'snow', 'sun', 'wind'];
+
+const cardsArray1 = [...cards1].concat(cards1).sort().map((imgTitle, i) => ({
+  id: i,
+  imgTitle,
+}));
+
+const createCardsArray = (deckNum) => shuffle(deckNum ? cardsArray1 : cardsArray);
 
 export default createCardsArray;

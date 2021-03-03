@@ -6,8 +6,6 @@ import createCardsArray from './utils/createCardsArray';
 import Footer from './components/Footer/Footer';
 import Settings from './components/Settings/Settings';
 
-const delayTime = 2000;
-
 function App() {
   const [cardsArray, setCardsArray] = useState([]);
   const [flippedPair, setFlippedPair] = useState([]);
@@ -15,7 +13,11 @@ function App() {
   const [isBoardDisabled, setIsBoardDisabled] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSecondBackStyle, setIsSecondBackStyle] = useState(false);
+  const [isSecondDeck, setIsSecondDeck] = useState(false);
+  const [isDelay2s, setIsDelay2s] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const delayTime = isDelay2s ? 2000 : 1000;
 
   useEffect(() => {
     setCardsArray(createCardsArray());
@@ -49,10 +51,14 @@ function App() {
   };
 
   const newGame = () => {
-    setCardsArray(createCardsArray());
+    setCardsArray(createCardsArray(isSecondDeck ? 1 : 0));
     setSolvedArray([]);
     resetFlippedAndDisabledState();
   };
+
+  useEffect(() => {
+    newGame();
+  }, [isSecondDeck]);
 
   const isSameCardClicked = (id) => flippedPair[0] === id;
 
@@ -92,12 +98,25 @@ function App() {
     setIsSecondBackStyle(backStyle);
   };
 
+  const changeDeck = (isDeck2) => {
+    setIsSecondDeck(isDeck2);
+  };
+
+  const changeDelay = (isDelay2Sec) => {
+    setIsDelay2s(isDelay2Sec);
+  };
+
   return (
     <div className="App">
       {isSettingsOpen ? (
         <Settings
           changeBackStyle={changeBackStyle}
-          isSecondBackStyle={isSecondBackStyle}
+          isBackStyle2={isSecondBackStyle}
+          changeDeck={changeDeck}
+          isSecondDeck={isSecondDeck}
+          changeDelay={changeDelay}
+          isDelay2s={isDelay2s}
+          toggleSettings={toggleSettings}
         />
       ) : null}
       <div className={`${isSettingsOpen ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
