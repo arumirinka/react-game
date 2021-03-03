@@ -1,10 +1,14 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useState } from 'react';
+import useSound from 'use-sound';
 import './App.css';
 import Board from './components/Board/Board';
 import createCardsArray from './utils/createCardsArray';
 import Footer from './components/Footer/Footer';
 import Settings from './components/Settings/Settings';
+
+let audioPath = '';
+const musicPath = '../../audio/music.mp3';
 
 function App() {
   const [cardsArray, setCardsArray] = useState([]);
@@ -16,6 +20,20 @@ function App() {
   const [isSecondDeck, setIsSecondDeck] = useState(false);
   const [isDelay2s, setIsDelay2s] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMusicOn, setIsMusicOn] = useState(false);
+  const [musicVolume, setMusicVolume] = useState(0.5);
+  const [isSoundsOn, setIsSoundsOn] = useState(true);
+  const [soundsVolume, setSoundsVolume] = useState(0.7);
+
+  const [play, { stop }] = useSound(musicPath, { volume: musicVolume });
+
+  useEffect(() => {
+    if (isMusicOn) {
+      play();
+    } else {
+      stop();
+    }
+  }, [isMusicOn]);
 
   const delayTime = isDelay2s ? 2000 : 1000;
 
@@ -38,6 +56,12 @@ function App() {
   const checkWin = () => {
     if (solvedArray.length && solvedArray.length === cardsArray.length) {
       console.log('you won');
+      if (isSoundsOn) {
+        audioPath = '../../audio/fanfare.mp3';
+        const audio = new Audio(audioPath);
+        audio.volume = soundsVolume;
+        audio.play();
+      }
     }
   };
 
@@ -71,6 +95,7 @@ function App() {
   const handleClick = (id) => {
     if (!flippedPair.length) {
       setFlippedPair([id]);
+      audioPath = '../../audio/flip.mp3';
     } else {
       if (isSameCardClicked(id)) {
         return;
@@ -78,11 +103,18 @@ function App() {
       setIsBoardDisabled(true);
       setFlippedPair([flippedPair[0], id]);
       if (isMatchingPair(id)) {
+        audioPath = '../../audio/correct.mp3';
         setSolvedArray([...solvedArray, flippedPair[0], id]);
         resetFlippedAndDisabledState();
       } else {
+        audioPath = '../../audio/wrong.mp3';
         setTimeout(resetFlippedAndDisabledState, delayTime);
       }
+    }
+    if (isSoundsOn) {
+      const audio = new Audio(audioPath);
+      audio.volume = soundsVolume;
+      audio.play();
     }
   };
 
@@ -106,6 +138,22 @@ function App() {
     setIsDelay2s(isDelay2Sec);
   };
 
+  const toggleMusic = (isMusicOnChecked) => {
+    setIsMusicOn(isMusicOnChecked);
+  };
+
+  const changeMusicVolume = (mVolume) => {
+    setMusicVolume(mVolume);
+  };
+
+  const toggleSounds = (isSoundsOnChecked) => {
+    setIsSoundsOn(isSoundsOnChecked);
+  };
+
+  const changeSoundsVolume = (sVolume) => {
+    setSoundsVolume(sVolume);
+  };
+
   return (
     <div className="App">
       {isSettingsOpen ? (
@@ -117,6 +165,14 @@ function App() {
           changeDelay={changeDelay}
           isDelay2s={isDelay2s}
           toggleSettings={toggleSettings}
+          isMusicOn={isMusicOn}
+          toggleMusic={toggleMusic}
+          musicVolume={musicVolume}
+          changeMusicVolume={changeMusicVolume}
+          isSoundsOn={isSoundsOn}
+          toggleSounds={toggleSounds}
+          soundsVolume={soundsVolume}
+          changeSoundsVolume={changeSoundsVolume}
         />
       ) : null}
       <div className={`${isSettingsOpen ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
