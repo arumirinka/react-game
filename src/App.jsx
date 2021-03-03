@@ -11,6 +11,8 @@ import Message from './components/Message/Message';
 let audioPath = '';
 const musicPath = '../../audio/music.mp3';
 
+let movesCounter = 0;
+
 function App() {
   const [cardsArray, setCardsArray] = useState([]);
   const [flippedPair, setFlippedPair] = useState([]);
@@ -77,6 +79,7 @@ function App() {
   };
 
   const newGame = () => {
+    movesCounter = 0;
     setIsGameWon(false);
     setCardsArray(createCardsArray(isSecondDeck ? 1 : 0));
     setSolvedArray([]);
@@ -99,12 +102,14 @@ function App() {
     if (!flippedPair.length) {
       setFlippedPair([id]);
       audioPath = '../../audio/flip.mp3';
+      movesCounter += 1;
     } else {
       if (isSameCardClicked(id)) {
         return;
       }
       setIsBoardDisabled(true);
       setFlippedPair([flippedPair[0], id]);
+      movesCounter += 1;
       if (isMatchingPair(id)) {
         audioPath = '../../audio/correct.mp3';
         setSolvedArray([...solvedArray, flippedPair[0], id]);
@@ -178,7 +183,7 @@ function App() {
           changeSoundsVolume={changeSoundsVolume}
         />
       ) : null}
-      {isGameWon ? <Message /> : null}
+      {isGameWon ? <Message moves={movesCounter} /> : null}
       <div className={`${isSettingsOpen || isGameWon ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
         <Board
           cardsArray={cardsArray}
@@ -188,6 +193,9 @@ function App() {
           handleClick={handleClick}
           isSecondBackStyle={isSecondBackStyle}
         />
+      </div>
+      <div className="moves__wrapper">
+        Moves: {movesCounter}
       </div>
       <div>
         <button type="button" onClick={newGame}>New game</button>
