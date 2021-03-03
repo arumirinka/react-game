@@ -6,6 +6,7 @@ import Board from './components/Board/Board';
 import createCardsArray from './utils/createCardsArray';
 import Footer from './components/Footer/Footer';
 import Settings from './components/Settings/Settings';
+import Message from './components/Message/Message';
 
 let audioPath = '';
 const musicPath = '../../audio/music.mp3';
@@ -15,6 +16,7 @@ function App() {
   const [flippedPair, setFlippedPair] = useState([]);
   const [solvedArray, setSolvedArray] = useState([]);
   const [isBoardDisabled, setIsBoardDisabled] = useState(false);
+  const [isGameWon, setIsGameWon] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSecondBackStyle, setIsSecondBackStyle] = useState(false);
   const [isSecondDeck, setIsSecondDeck] = useState(false);
@@ -55,7 +57,7 @@ function App() {
 
   const checkWin = () => {
     if (solvedArray.length && solvedArray.length === cardsArray.length) {
-      console.log('you won');
+      setIsGameWon(true);
       if (isSoundsOn) {
         audioPath = '../../audio/fanfare.mp3';
         const audio = new Audio(audioPath);
@@ -75,6 +77,7 @@ function App() {
   };
 
   const newGame = () => {
+    setIsGameWon(false);
     setCardsArray(createCardsArray(isSecondDeck ? 1 : 0));
     setSolvedArray([]);
     resetFlippedAndDisabledState();
@@ -175,7 +178,8 @@ function App() {
           changeSoundsVolume={changeSoundsVolume}
         />
       ) : null}
-      <div className={`${isSettingsOpen ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
+      {isGameWon ? <Message /> : null}
+      <div className={`${isSettingsOpen || isGameWon ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
         <Board
           cardsArray={cardsArray}
           flippedPair={flippedPair}
