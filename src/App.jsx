@@ -1,8 +1,10 @@
+/* eslint-disable no-undef */
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import Board from './components/Board/Board';
 import createCardsArray from './utils/createCardsArray';
 import Footer from './components/Footer/Footer';
+import Settings from './components/Settings/Settings';
 
 const delayTime = 2000;
 
@@ -11,10 +13,25 @@ function App() {
   const [flippedPair, setFlippedPair] = useState([]);
   const [solvedArray, setSolvedArray] = useState([]);
   const [isBoardDisabled, setIsBoardDisabled] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSecondBackStyle, setIsSecondBackStyle] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     setCardsArray(createCardsArray());
   }, []);
+
+  const toggleFullscreen = () => {
+    if (isFullscreen && !document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  };
+
+  useEffect(() => {
+    toggleFullscreen();
+  }, [isFullscreen]);
 
   const checkWin = () => {
     if (solvedArray.length && solvedArray.length === cardsArray.length) {
@@ -63,17 +80,42 @@ function App() {
     }
   };
 
+  const toggleSettings = () => {
+    setIsSettingsOpen(!isSettingsOpen);
+  };
+
+  const handleFullscreenClick = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
+  const changeBackStyle = (backStyle) => {
+    setIsSecondBackStyle(backStyle);
+  };
+
   return (
     <div className="App">
-      <Board
-        cardsArray={cardsArray}
-        flippedPair={flippedPair}
-        solvedArray={solvedArray}
-        isBoardDisabled={isBoardDisabled}
-        handleClick={handleClick}
-      />
+      {isSettingsOpen ? (
+        <Settings
+          changeBackStyle={changeBackStyle}
+          isSecondBackStyle={isSecondBackStyle}
+        />
+      ) : null}
+      <div className={`${isSettingsOpen ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
+        <Board
+          cardsArray={cardsArray}
+          flippedPair={flippedPair}
+          solvedArray={solvedArray}
+          isBoardDisabled={isBoardDisabled}
+          handleClick={handleClick}
+          isSecondBackStyle={isSecondBackStyle}
+        />
+      </div>
       <div>
         <button type="button" onClick={newGame}>New game</button>
+        <button type="button" onClick={toggleSettings}>Settings</button>
+        <button type="button" onClick={handleFullscreenClick}>
+          {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+        </button>
       </div>
       <Footer />
     </div>

@@ -8,26 +8,30 @@ type Props = {
   handleClick: Function,
   id: number,
   imgTitle: string,
+  isSecondBackStyle: boolean,
 };
 
 const Card: React.FC<Props> = ({
   // eslint-disable-next-line react/prop-types
-  isFlipped, isSolved, isDisabled, handleClick, id, imgTitle,
-}) => (
-  // eslint-disable-next-line max-len
-  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-  <div
-    className={`card ${isFlipped ? 'flipped' : ''} ${isSolved || isDisabled ? 'disabled' : ''}`}
-    onClick={() => (isDisabled ? null : handleClick(id))}
-  >
-    <div className="card__inner">
-      <img
-        src={isFlipped || isSolved ? `/img/${imgTitle}.jpg` : '/img/pea.jpg'}
-        alt="matching game img"
-        className={isFlipped ? 'front' : 'back'}
-      />
+  isFlipped, isSolved, isDisabled, handleClick, id, imgTitle, isSecondBackStyle,
+}) => {
+  const backImg = isSecondBackStyle ? '/img/butterfly_back.jpg' : '/img/ladybug_back.jpg';
+
+  return (
+    // eslint-disable-next-line
+    <div
+      className={`card ${isFlipped ? 'flipped' : ''} ${isSolved || isDisabled ? 'disabled' : ''}`}
+      onClick={() => (isDisabled ? null : handleClick(id))}
+    >
+      <div className="card__inner">
+        <img
+          src={isFlipped || isSolved ? `/img/${imgTitle}.jpg` : backImg}
+          alt="matching game img"
+          className={isFlipped ? 'front' : 'back'}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Card;

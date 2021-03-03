@@ -14,10 +14,11 @@ type Props = {
   solvedArray: Array<number>,
   isBoardDisabled: boolean,
   handleClick: Function,
+  isSecondBackStyle: boolean,
 };
 
 const Board: React.FC<Props> = ({
-  cardsArray, flippedPair, solvedArray, isBoardDisabled, handleClick,
+  cardsArray, flippedPair, solvedArray, isBoardDisabled, handleClick, isSecondBackStyle,
 }) => (
   <div className="board">
     {cardsArray.map((card: CardType) => (
@@ -29,6 +30,7 @@ const Board: React.FC<Props> = ({
         isDisabled={isBoardDisabled || solvedArray.includes(card.id)}
         imgTitle={card.imgTitle}
         handleClick={handleClick}
+        isSecondBackStyle={isSecondBackStyle}
       />
     ))}
   </div>

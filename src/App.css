@@ -1,3 +1,9 @@
 .App {
   text-align: center;
 }
+
+.dark-overlay--enabled {
+  pointer-events: none;
+  background-color: #c2c2c255;
+  filter: grayscale(70%);
+}
