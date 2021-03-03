@@ -8,6 +8,7 @@ import Footer from './components/Footer/Footer';
 import Settings from './components/Settings/Settings';
 import Message from './components/Message/Message';
 import GameInfo from './components/GameInfo/GameInfo';
+import Records from './components/Records/Records';
 
 let audioPath = '';
 const musicPath = '../../audio/music.mp3';
@@ -30,6 +31,8 @@ function App() {
   const [musicVolume, setMusicVolume] = useState(0.5);
   const [isSoundsOn, setIsSoundsOn] = useState(true);
   const [soundsVolume, setSoundsVolume] = useState(0.7);
+  const [records, setRecords] = useState([]);
+  const [isRecordsOpen, setIsRecordsOpen] = useState(false);
 
   const [play, { stop }] = useSound(musicPath, { volume: musicVolume });
 
@@ -62,6 +65,7 @@ function App() {
   const checkWin = () => {
     if (solvedArray.length && solvedArray.length === cardsArray.length) {
       setIsGameWon(true);
+      setRecords([...records, movesCounter]);
       if (isSoundsOn) {
         audioPath = '../../audio/fanfare.mp3';
         const audio = new Audio(audioPath);
@@ -134,6 +138,10 @@ function App() {
 
   const toggleGameInfo = () => {
     setIsGameInfoOpen(!isGameInfoOpen);
+  };
+
+  const toggleRecords = () => {
+    setIsRecordsOpen(!isRecordsOpen);
   };
 
   const handleFullscreenClick = () => {
@@ -216,7 +224,8 @@ function App() {
       ) : null}
       {isGameWon ? <Message moves={movesCounter} /> : null}
       {isGameInfoOpen ? <GameInfo toggleGameInfo={toggleGameInfo} /> : null}
-      <div className={`${isSettingsOpen || isGameWon || isGameInfoOpen ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
+      {isRecordsOpen ? <Records toggleRecords={toggleRecords} records={records} /> : null}
+      <div className={`${isSettingsOpen || isGameWon || isGameInfoOpen || isRecordsOpen ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
         <Board
           cardsArray={cardsArray}
           flippedPair={flippedPair}
@@ -227,7 +236,16 @@ function App() {
         />
       </div>
       <div className="moves__wrapper">
-        Moves: {movesCounter}
+        <span className="moves__span">
+          Moves: {movesCounter}
+        </span>
+        <button
+          type="button"
+          onClick={toggleRecords}
+          className={`${isRecordsOpen ? 'btn--active' : ''}`}
+        >
+          Last 10 records
+        </button>
       </div>
       <div>
         <button type="button" onClick={newGame}>New game</button>
@@ -243,7 +261,7 @@ function App() {
           onClick={toggleGameInfo}
           className={`${isGameInfoOpen ? 'btn--active' : ''}`}
         >
-          HotKeys
+          Hot keys
         </button>
         <button
           type="button"

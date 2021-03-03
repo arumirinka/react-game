@@ -12,7 +12,7 @@ const GameInfo: React.FC<Props> = ({ toggleGameInfo }) => {
   return (
     <div className="game_info__wrapper">
       <h3>
-        Hot keys
+        Hot Keys
       </h3>
       <p>
         n - start new game<br />

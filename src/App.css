@@ -12,6 +12,10 @@
   margin-bottom: 5px;
 }
 
+.moves__span {
+  margin-right: 8px;
+}
+
 button {
   border: 1px solid #644444;
   padding: 1px 5px;
@@ -30,4 +34,8 @@ button:hover {
   cursor: pointer;
   background-color: #f0bdac;
   transition: background 0.2s;
+}
+
+ol {
+  padding-left: 10px;
 }
