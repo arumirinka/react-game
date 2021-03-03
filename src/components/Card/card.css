@@ -1,0 +1,54 @@
+.card {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+  perspective: 1000px;
+  background: #ffaeae;
+  border: 1px solid #644444;
+  transition: all 0.5s;
+}
+
+.card:hover {
+  cursor: pointer;
+  box-shadow: 1px 1px #fff9, 1px -1px #fff9, -1px 1px #fff9, -1px -1px #fff9, 4px 5px 5px rgba(0,0,0,0.5);
+  transition: all 0.5s;
+}
+
+.card.flipped .card__inner {
+  transform: rotateY(180deg);
+}
+
+.card__inner {
+  position: relative;
+  transition: 0.5s;
+  transform-style: preserve-3d;
+}
+
+.front,
+.back {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100px;
+  height: 100px;
+  backface-visibility: hidden;
+}
+
+.front {
+  transform: rotateY(180deg);
+}
+
+.back {
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+.disabled {
+  border: 1px solid #d9b7b7;
+}
+
+.disabled:hover {
+  cursor: auto;
+  box-shadow: none;
+}

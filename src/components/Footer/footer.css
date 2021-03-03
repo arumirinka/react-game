@@ -1,0 +1,18 @@
+footer {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.footer__link {
+  color: #6a0e1a;
+  text-decoration: none;
+}
+
+.footer__link:hover {
+  text-decoration: underline;
+}
+
+.footer__img {
+  height: 1rem;
+}
