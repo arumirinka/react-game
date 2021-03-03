@@ -13,18 +13,19 @@ import Records from './components/Records/Records';
 let audioPath = '';
 const musicPath = '../../audio/music.mp3';
 
-let movesCounter = 0;
+let movesCounter = localStorage.getItem('arumiMemoryMoves') ? Number(localStorage.getItem('arumiMemoryMoves')) : 0;
+const storageSolved = localStorage.getItem('arumiMemorySolved') ? JSON.parse(localStorage.getItem('arumiMemorySolved')) : null;
 
 function App() {
   const [cardsArray, setCardsArray] = useState([]);
   const [flippedPair, setFlippedPair] = useState([]);
-  const [solvedArray, setSolvedArray] = useState([]);
+  const [solvedArray, setSolvedArray] = useState(storageSolved || []);
   const [isBoardDisabled, setIsBoardDisabled] = useState(false);
   const [isGameWon, setIsGameWon] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGameInfoOpen, setIsGameInfoOpen] = useState(false);
   const [isSecondBackStyle, setIsSecondBackStyle] = useState(false);
-  const [isSecondDeck, setIsSecondDeck] = useState(false);
+  const [isSecondDeck, setIsSecondDeck] = useState('');
   const [isDelay2s, setIsDelay2s] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMusicOn, setIsMusicOn] = useState(false);
@@ -47,8 +48,20 @@ function App() {
   const delayTime = isDelay2s ? 2000 : 1000;
 
   useEffect(() => {
-    setCardsArray(createCardsArray());
+    if (localStorage.getItem('arumiMemoryCards')) {
+      setCardsArray(JSON.parse(localStorage.getItem('arumiMemoryCards')));
+    } else {
+      setCardsArray(createCardsArray());
+    }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('arumiMemoryCards', JSON.stringify(cardsArray));
+  }, [cardsArray]);
+
+  useEffect(() => {
+    localStorage.setItem('arumiMemorySolved', JSON.stringify(solvedArray));
+  }, [solvedArray]);
 
   const toggleFullscreen = () => {
     if (isFullscreen && !document.fullscreenElement) {
@@ -93,7 +106,9 @@ function App() {
   };
 
   useEffect(() => {
-    newGame();
+    if (isSecondDeck !== '') {
+      newGame();
+    }
   }, [isSecondDeck]);
 
   const isSameCardClicked = (id) => flippedPair[0] === id;
@@ -198,6 +213,17 @@ function App() {
     window.addEventListener('keypress', handleKeyPress);
     return () => {
       window.removeEventListener('keypress', handleKeyPress);
+    };
+  }, []);
+
+  const handleUnload = () => {
+    localStorage.setItem('arumiMemoryMoves', movesCounter);
+  };
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
     };
   }, []);
 
