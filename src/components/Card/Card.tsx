@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './card.css';
 
 type Props = {
@@ -12,26 +13,51 @@ type Props = {
 };
 
 const Card: React.FC<Props> = ({
-  // eslint-disable-next-line react/prop-types
   isFlipped, isSolved, isDisabled, handleClick, id, imgTitle, isSecondBackStyle,
 }) => {
-  const backImg = isSecondBackStyle ? '/img/butterfly_back.jpg' : '/img/ladybug_back.jpg';
+  const backImg: string = isSecondBackStyle ? '/img/butterfly_back.jpg' : '/img/ladybug_back.jpg';
+
+  const isFlippedOrSolved: boolean = isFlipped || isSolved;
+  const flippedStyle: string = isFlipped ? ' flipped' : '';
+  const solvedStyle: string = isSolved ? ' solved' : '';
+  const disabledStyle: string = isDisabled ? ' disabled' : '';
+  const cardDivClassName: string = `card${flippedStyle}${solvedStyle}${disabledStyle}`;
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+  ): void => {
+    if (!isDisabled && e.key === 'Enter') {
+      handleClick(id);
+    }
+  };
 
   return (
-    // eslint-disable-next-line
     <div
-      className={`card ${isFlipped ? 'flipped' : ''} ${isSolved || isDisabled ? 'disabled' : ''}`}
+      className={cardDivClassName}
       onClick={() => (isDisabled ? null : handleClick(id))}
+      onKeyDown={(e) => handleKeyDown(e)}
+      role="button"
+      tabIndex={0}
     >
       <div className="card__inner">
         <img
-          src={isFlipped || isSolved ? `/img/${imgTitle}.jpg` : backImg}
-          alt="matching game img"
-          className={isFlipped ? 'front' : 'back'}
+          src={isFlippedOrSolved ? `/img/${imgTitle}.jpg` : backImg}
+          alt={isFlippedOrSolved ? imgTitle : 'matching game img'}
+          className={isFlippedOrSolved ? 'front' : 'back'}
         />
       </div>
     </div>
   );
+};
+
+Card.propTypes = {
+  isFlipped: PropTypes.bool.isRequired,
+  isSolved: PropTypes.bool.isRequired,
+  isDisabled: PropTypes.bool.isRequired,
+  handleClick: PropTypes.func.isRequired,
+  id: PropTypes.number.isRequired,
+  imgTitle: PropTypes.string.isRequired,
+  isSecondBackStyle: PropTypes.bool.isRequired,
 };
 
 export default Card;

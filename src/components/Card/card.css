@@ -19,6 +19,10 @@
   transform: rotateY(180deg);
 }
 
+.card.solved .card__inner {
+  transform: rotateY(180deg);
+}
+
 .card__inner {
   position: relative;
   transition: 0.5s;
