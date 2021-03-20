@@ -227,75 +227,88 @@ function App() {
     };
   }, []);
 
+  const isDarkOverlayOn = isSettingsOpen || isGameWon || isGameInfoOpen || isRecordsOpen;
+
   return (
     <div className="App">
-      {isSettingsOpen ? (
-        <Settings
-          changeBackStyle={changeBackStyle}
-          isBackStyle2={isSecondBackStyle}
-          changeDeck={changeDeck}
-          isSecondDeck={isSecondDeck}
-          changeDelay={changeDelay}
-          isDelay2s={isDelay2s}
-          toggleSettings={toggleSettings}
-          isMusicOn={isMusicOn}
-          toggleMusic={toggleMusic}
-          musicVolume={musicVolume}
-          changeMusicVolume={changeMusicVolume}
-          isSoundsOn={isSoundsOn}
-          toggleSounds={toggleSounds}
-          soundsVolume={soundsVolume}
-          changeSoundsVolume={changeSoundsVolume}
-        />
-      ) : null}
-      {isGameWon ? <Message moves={movesCounter} /> : null}
-      {isGameInfoOpen ? <GameInfo toggleGameInfo={toggleGameInfo} /> : null}
-      {isRecordsOpen ? <Records toggleRecords={toggleRecords} records={records} /> : null}
-      <div className={`${isSettingsOpen || isGameWon || isGameInfoOpen || isRecordsOpen ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
-        <Board
-          cardsArray={cardsArray}
-          flippedPair={flippedPair}
-          solvedArray={solvedArray}
-          isBoardDisabled={isBoardDisabled}
-          handleClick={handleClick}
-          isSecondBackStyle={isSecondBackStyle}
-        />
-      </div>
-      <div className="moves__wrapper">
-        <span className="moves__span">
-          Moves: {movesCounter}
-        </span>
-        <button
-          type="button"
-          onClick={toggleRecords}
-          className={`${isRecordsOpen ? 'btn--active' : ''}`}
-        >
-          Last 10 records
-        </button>
-      </div>
-      <div>
-        <button type="button" onClick={newGame}>New game</button>
-        <button
-          type="button"
-          onClick={toggleSettings}
-          className={`${isSettingsOpen ? 'btn--active' : ''}`}
-        >
-          Settings
-        </button>
-        <button
-          type="button"
-          onClick={toggleGameInfo}
-          className={`${isGameInfoOpen ? 'btn--active' : ''}`}
-        >
-          Hot keys
-        </button>
-        <button
-          type="button"
-          onClick={handleFullscreenClick}
-          className={`${isFullscreen ? 'btn--active' : ''}`}
-        >
-          {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-        </button>
+      <div className="main__wrapper">
+        {isSettingsOpen ? (
+          <Settings
+            changeBackStyle={changeBackStyle}
+            isBackStyle2={isSecondBackStyle}
+            changeDeck={changeDeck}
+            isSecondDeck={isSecondDeck}
+            changeDelay={changeDelay}
+            isDelay2s={isDelay2s}
+            toggleSettings={toggleSettings}
+            isMusicOn={isMusicOn}
+            toggleMusic={toggleMusic}
+            musicVolume={musicVolume}
+            changeMusicVolume={changeMusicVolume}
+            isSoundsOn={isSoundsOn}
+            toggleSounds={toggleSounds}
+            soundsVolume={soundsVolume}
+            changeSoundsVolume={changeSoundsVolume}
+          />
+        ) : null}
+        {isGameWon ? (
+          <Message moves={movesCounter} />
+        ) : null}
+        {isGameInfoOpen ? (
+          <GameInfo toggleGameInfo={toggleGameInfo} />
+        ) : null}
+        {isRecordsOpen ? (
+          <Records
+            toggleRecords={toggleRecords}
+            records={records}
+          />
+        ) : null}
+        <div className={`${isDarkOverlayOn ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
+          <Board
+            cardsArray={cardsArray}
+            flippedPair={flippedPair}
+            solvedArray={solvedArray}
+            isBoardDisabled={isBoardDisabled}
+            handleClick={handleClick}
+            isSecondBackStyle={isSecondBackStyle}
+          />
+        </div>
+        <div className="moves__wrapper">
+          <span className="moves__span">
+            Moves: {movesCounter}
+          </span>
+          <button
+            type="button"
+            onClick={toggleRecords}
+            className={`${isRecordsOpen ? 'btn--active' : ''}`}
+          >
+            Last 10 records
+          </button>
+        </div>
+        <div>
+          <button type="button" onClick={newGame}>New game</button>
+          <button
+            type="button"
+            onClick={toggleSettings}
+            className={`${isSettingsOpen ? 'btn--active' : ''}`}
+          >
+            Settings
+          </button>
+          <button
+            type="button"
+            onClick={toggleGameInfo}
+            className={`${isGameInfoOpen ? 'btn--active' : ''}`}
+          >
+            Hot keys
+          </button>
+          <button
+            type="button"
+            onClick={handleFullscreenClick}
+            className={`${isFullscreen ? 'btn--active' : ''}`}
+          >
+            {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          </button>
+        </div>
       </div>
       <Footer />
     </div>
