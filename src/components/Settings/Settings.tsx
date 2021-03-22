@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import './settings.css';
 
 type Props = {
@@ -167,6 +167,24 @@ const Settings: React.FC<Props> = ({
       </button>
     </div>
   );
+};
+
+Settings.propTypes = {
+  changeBackStyle: PropTypes.func.isRequired,
+  isBackStyle2: PropTypes.bool.isRequired,
+  changeDeck: PropTypes.func.isRequired,
+  isSecondDeck: PropTypes.bool.isRequired,
+  changeDelay: PropTypes.func.isRequired,
+  isDelay2s: PropTypes.bool.isRequired,
+  toggleSettings: PropTypes.func.isRequired,
+  toggleMusic: PropTypes.func.isRequired,
+  isMusicOn: PropTypes.bool.isRequired,
+  musicVolume: PropTypes.number.isRequired,
+  changeMusicVolume: PropTypes.func.isRequired,
+  isSoundsOn: PropTypes.bool.isRequired,
+  toggleSounds: PropTypes.func.isRequired,
+  soundsVolume: PropTypes.number.isRequired,
+  changeSoundsVolume: PropTypes.func.isRequired,
 };
 
 export default Settings;

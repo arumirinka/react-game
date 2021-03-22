@@ -1,11 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './message.css';
 
 type Props = {
   moves: number,
 };
 
-// eslint-disable-next-line react/prop-types
 const Message: React.FC<Props> = ({ moves }) => (
   <div className="message__wrapper">
     <h3>
@@ -16,5 +16,9 @@ const Message: React.FC<Props> = ({ moves }) => (
     </h3>
   </div>
 );
+
+Message.propTypes = {
+  moves: PropTypes.number.isRequired,
+};
 
 export default Message;

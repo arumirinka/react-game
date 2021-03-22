@@ -1,13 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 type Props = {
   records: Array<number>,
-  toggleRecords: Function,
+  toggleRecords: React.MouseEventHandler<HTMLButtonElement>,
 };
 
-// eslint-disable-next-line react/prop-types
 const Records: React.FC<Props> = ({ records, toggleRecords }) => {
-  const handleClick = () => toggleRecords();
   const last10Records = [...records].reverse().slice(0, 10);
   const indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -17,22 +16,26 @@ const Records: React.FC<Props> = ({ records, toggleRecords }) => {
         Last 10 Records
       </h3>
       {
-        last10Records.length && (
-        <ol>
-          {last10Records.map((rec, i) => (
-            <li key={indexes[i]}>Moves: {rec}</li>
-          ))}
-        </ol>
+        last10Records.length ? (
+          <ol>
+            {last10Records.map((rec, i) => (
+              <li key={indexes[i]}>Moves: {rec}</li>
+            ))}
+          </ol>
+        ) : (
+          <p>No records yet.</p>
         )
       }
-      {
-        !last10Records.length && <p>No records yet.</p>
-      }
-      <button type="button" onClick={handleClick}>
+      <button type="button" onClick={toggleRecords}>
         Back
       </button>
     </div>
   );
+};
+
+Records.propTypes = {
+  records: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
+  toggleRecords: PropTypes.func.isRequired,
 };
 
 export default Records;

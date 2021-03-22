@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import Card from '../Card/Card';
 import './board.css';
 
@@ -35,5 +35,17 @@ const Board: React.FC<Props> = ({
     ))}
   </div>
 );
+
+Board.propTypes = {
+  cardsArray: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    imgTitle: PropTypes.string.isRequired,
+  }).isRequired).isRequired,
+  flippedPair: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
+  solvedArray: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
+  isBoardDisabled: PropTypes.bool.isRequired,
+  handleClick: PropTypes.func.isRequired,
+  isSecondBackStyle: PropTypes.bool.isRequired,
+};
 
 export default Board;
