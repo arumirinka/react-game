@@ -10,9 +10,6 @@ import GameInfo from './components/GameInfo/GameInfo';
 import Records from './components/Records/Records';
 
 function App() {
-  let audioPath = '';
-  const musicPath = '../../audio/music.mp3';
-
   const [cardsArray, setCardsArray] = useState([]);
   const [flippedPair, setFlippedPair] = useState([]);
   const [solvedArray, setSolvedArray] = useState(JSON.parse(localStorage.getItem('arumiMemorySolved')) || []);
@@ -32,7 +29,7 @@ function App() {
   const [isRecordsOpen, setIsRecordsOpen] = useState(false);
   const [movesCounter, setMovesCounter] = useState(Number(localStorage.getItem('arumiMemoryMoves')) || 0);
 
-  const [play, { stop }] = useSound(musicPath, { volume: musicVolume });
+  const [play, { stop }] = useSound('../../audio/music.mp3', { volume: musicVolume, loop: true });
 
   useEffect(() => {
     if (isMusicOn) {
@@ -81,7 +78,7 @@ function App() {
       setIsGameWon(true);
       setRecords([...records, movesCounter]);
       if (isSoundsOn) {
-        audioPath = '../../audio/fanfare.mp3';
+        const audioPath = '../../audio/fanfare.mp3';
         const audio = new Audio(audioPath);
         audio.volume = soundsVolume;
         audio.play();
@@ -121,6 +118,7 @@ function App() {
   };
 
   const handleClick = (id) => {
+    let audioPath = '';
     if (!flippedPair.length) {
       setFlippedPair([id]);
       audioPath = '../../audio/flip.mp3';
