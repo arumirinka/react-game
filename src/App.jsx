@@ -10,52 +10,64 @@ import GameInfo from './components/GameInfo/GameInfo';
 import Records from './components/Records/Records';
 
 function App() {
-  const [cardsArray, setCardsArray] = useState([]);
-  const [flippedPair, setFlippedPair] = useState([]);
-  const [solvedArray, setSolvedArray] = useState(JSON.parse(localStorage.getItem('arumiMemorySolved')) || []);
-  const [isBoardDisabled, setIsBoardDisabled] = useState(false);
-  const [isGameWon, setIsGameWon] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isGameInfoOpen, setIsGameInfoOpen] = useState(false);
-  const [isSecondBackStyle, setIsSecondBackStyle] = useState(false);
-  const [isSecondDeck, setIsSecondDeck] = useState('');
-  const [isDelay2s, setIsDelay2s] = useState(false);
+  const [gameState, setGameState] = useState({
+    cardsArray: [],
+    flippedPair: [],
+    solvedArray: JSON.parse(localStorage.getItem('arumiMemorySolved')) || [],
+    isBoardDisabled: false,
+    isGameWon: false,
+  });
+
+  const [settingsState, setSettingsState] = useState({
+    isSecondBackStyle: false,
+    isSecondDeck: '',
+    isDelay2s: false,
+    isMusicOn: false,
+    musicVolume: 0.5,
+    isSoundsOn: true,
+    soundsVolume: 0.7,
+  });
+
+  const [modalsState, setModalsState] = useState({
+    isSettingsOpen: false,
+    isGameInfoOpen: false,
+    isRecordsOpen: false,
+  });
+
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isMusicOn, setIsMusicOn] = useState(false);
-  const [musicVolume, setMusicVolume] = useState(0.5);
-  const [isSoundsOn, setIsSoundsOn] = useState(true);
-  const [soundsVolume, setSoundsVolume] = useState(0.7);
   const [records, setRecords] = useState([]);
-  const [isRecordsOpen, setIsRecordsOpen] = useState(false);
   const [movesCounter, setMovesCounter] = useState(Number(localStorage.getItem('arumiMemoryMoves')) || 0);
 
-  const [play, { stop }] = useSound('../../audio/music.mp3', { volume: musicVolume, loop: true });
+  const [play, { stop }] = useSound('../../audio/music.mp3', {
+    volume: settingsState.musicVolume,
+    loop: true,
+  });
+
+  const delayTime = settingsState.isDelay2s ? 2000 : 1000;
 
   useEffect(() => {
-    if (isMusicOn) {
+    if (settingsState.isMusicOn) {
       play();
     } else {
       stop();
     }
-  }, [isMusicOn]);
-
-  const delayTime = isDelay2s ? 2000 : 1000;
+  }, [settingsState.isMusicOn]);
 
   useEffect(() => {
     if (localStorage.getItem('arumiMemoryCards')) {
-      setCardsArray(JSON.parse(localStorage.getItem('arumiMemoryCards')));
+      setGameState({ ...gameState, cardsArray: JSON.parse(localStorage.getItem('arumiMemoryCards')) });
     } else {
-      setCardsArray(createCardsArray());
+      setGameState({ ...gameState, cardsArray: createCardsArray() });
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('arumiMemoryCards', JSON.stringify(cardsArray));
-  }, [cardsArray]);
+    localStorage.setItem('arumiMemoryCards', JSON.stringify(gameState.cardsArray));
+  }, [gameState.cardsArray]);
 
   useEffect(() => {
-    localStorage.setItem('arumiMemorySolved', JSON.stringify(solvedArray));
-  }, [solvedArray]);
+    localStorage.setItem('arumiMemorySolved', JSON.stringify(gameState.solvedArray));
+  }, [gameState.solvedArray]);
 
   useEffect(() => {
     localStorage.setItem('arumiMemoryMoves', movesCounter);
@@ -74,13 +86,14 @@ function App() {
   }, [isFullscreen]);
 
   const checkWin = () => {
-    if (solvedArray.length && solvedArray.length === cardsArray.length) {
-      setIsGameWon(true);
+    if (gameState.solvedArray.length
+      && gameState.solvedArray.length === gameState.cardsArray.length) {
+      setGameState({ ...gameState, isGameWon: true });
       setRecords([...records, movesCounter]);
-      if (isSoundsOn) {
+      if (settingsState.isSoundsOn) {
         const audioPath = '../../audio/fanfare.mp3';
         const audio = new Audio(audioPath);
-        audio.volume = soundsVolume;
+        audio.volume = settingsState.soundsVolume;
         audio.play();
       }
     }
@@ -88,74 +101,84 @@ function App() {
 
   useEffect(() => {
     checkWin();
-  }, [solvedArray]);
-
-  const resetFlippedAndDisabledState = () => {
-    setFlippedPair([]);
-    setIsBoardDisabled(false);
-  };
+  }, [gameState.solvedArray]);
 
   const newGame = () => {
     setMovesCounter(0);
-    setIsGameWon(false);
-    setCardsArray(createCardsArray(isSecondDeck ? 1 : 0));
-    setSolvedArray([]);
-    resetFlippedAndDisabledState();
+    setGameState({
+      ...gameState,
+      cardsArray: createCardsArray(settingsState.isSecondDeck ? 1 : 0),
+      solvedArray: [],
+      flippedPair: [],
+      isBoardDisabled: false,
+      isGameWon: false,
+    });
   };
 
   useEffect(() => {
-    if (isSecondDeck !== '') {
+    if (settingsState.isSecondDeck !== '') {
       newGame();
     }
-  }, [isSecondDeck]);
+  }, [settingsState.isSecondDeck]);
 
-  const isSameCardClicked = (id) => flippedPair[0] === id;
+  const isSameCardClicked = (id) => gameState.flippedPair[0] === id;
 
   const isMatchingPair = (id) => {
-    const flippedCard = cardsArray.find((card) => card.id === flippedPair[0]);
-    const clickedCard = cardsArray.find((card) => card.id === id);
+    const flippedCard = gameState.cardsArray.find((card) => card.id === gameState.flippedPair[0]);
+    const clickedCard = gameState.cardsArray.find((card) => card.id === id);
     return flippedCard.imgTitle === clickedCard.imgTitle;
+  };
+
+  const resetFlippedAndDisabledState = () => {
+    setGameState({ ...gameState, flippedPair: [], isBoardDisabled: false });
   };
 
   const handleClick = (id) => {
     let audioPath = '';
-    if (!flippedPair.length) {
-      setFlippedPair([id]);
+    if (!gameState.flippedPair.length) {
+      setGameState({ ...gameState, flippedPair: [id] });
       audioPath = '../../audio/flip.mp3';
       setMovesCounter((prev) => prev + 1);
     } else {
       if (isSameCardClicked(id)) {
         return;
       }
-      setIsBoardDisabled(true);
-      setFlippedPair([flippedPair[0], id]);
+      setGameState({
+        ...gameState,
+        flippedPair: [gameState.flippedPair[0], id],
+        isBoardDisabled: true,
+      });
       setMovesCounter((prev) => prev + 1);
       if (isMatchingPair(id)) {
         audioPath = '../../audio/correct.mp3';
-        setSolvedArray([...solvedArray, flippedPair[0], id]);
-        resetFlippedAndDisabledState();
+        setGameState({
+          ...gameState,
+          solvedArray: [...gameState.solvedArray, gameState.flippedPair[0], id],
+          flippedPair: [],
+          isBoardDisabled: false,
+        });
       } else {
         audioPath = '../../audio/wrong.mp3';
         setTimeout(resetFlippedAndDisabledState, delayTime);
       }
     }
-    if (isSoundsOn) {
+    if (settingsState.isSoundsOn) {
       const audio = new Audio(audioPath);
-      audio.volume = soundsVolume;
+      audio.volume = settingsState.soundsVolume;
       audio.play();
     }
   };
 
   const toggleSettings = () => {
-    setIsSettingsOpen(!isSettingsOpen);
+    setModalsState({ ...modalsState, isSettingsOpen: !modalsState.isSettingsOpen });
   };
 
   const toggleGameInfo = () => {
-    setIsGameInfoOpen(!isGameInfoOpen);
+    setModalsState({ ...modalsState, isGameInfoOpen: !modalsState.isGameInfoOpen });
   };
 
   const toggleRecords = () => {
-    setIsRecordsOpen(!isRecordsOpen);
+    setModalsState({ ...modalsState, isRecordsOpen: !modalsState.isRecordsOpen });
   };
 
   const handleFullscreenClick = () => {
@@ -163,31 +186,31 @@ function App() {
   };
 
   const changeBackStyle = (backStyle) => {
-    setIsSecondBackStyle(backStyle);
+    setSettingsState({ ...settingsState, isSecondBackStyle: backStyle });
   };
 
   const changeDeck = (isDeck2) => {
-    setIsSecondDeck(isDeck2);
+    setSettingsState({ ...settingsState, isSecondDeck: isDeck2 });
   };
 
   const changeDelay = (isDelay2Sec) => {
-    setIsDelay2s(isDelay2Sec);
+    setSettingsState({ ...settingsState, isDelay2s: isDelay2Sec });
   };
 
   const toggleMusic = (isMusicOnChecked) => {
-    setIsMusicOn(isMusicOnChecked);
+    setSettingsState({ ...settingsState, isMusicOn: isMusicOnChecked });
   };
 
   const changeMusicVolume = (mVolume) => {
-    setMusicVolume(mVolume);
+    setSettingsState({ ...settingsState, musicVolume: mVolume });
   };
 
   const toggleSounds = (isSoundsOnChecked) => {
-    setIsSoundsOn(isSoundsOnChecked);
+    setSettingsState({ ...settingsState, isSoundsOn: isSoundsOnChecked });
   };
 
   const changeSoundsVolume = (sVolume) => {
-    setSoundsVolume(sVolume);
+    setSettingsState({ ...settingsState, soundsVolume: sVolume });
   };
 
   const handleKeyPress = (event) => {
@@ -201,10 +224,10 @@ function App() {
       handleFullscreenClick();
     }
     if (event.key === 'm' || event.key === 'M') {
-      setIsMusicOn(false);
+      setSettingsState({ ...settingsState, isMusicOn: false });
     }
     if (event.key === 'j' || event.key === 'J') {
-      setIsSoundsOn(false);
+      setSettingsState({ ...settingsState, isSoundsOn: false });
     }
   };
 
@@ -215,37 +238,38 @@ function App() {
     };
   }, []);
 
-  const isDarkOverlayOn = isSettingsOpen || isGameWon || isGameInfoOpen || isRecordsOpen;
+  const isDarkOverlayOn = modalsState.isSettingsOpen || gameState.isGameWon
+    || modalsState.isGameInfoOpen || modalsState.isRecordsOpen;
 
   return (
     <div className="App">
       <div className="main__wrapper">
-        {isSettingsOpen ? (
+        {modalsState.isSettingsOpen ? (
           <Settings
             changeBackStyle={changeBackStyle}
-            isBackStyle2={isSecondBackStyle}
+            isBackStyle2={settingsState.isSecondBackStyle}
             changeDeck={changeDeck}
-            isSecondDeck={isSecondDeck}
+            isSecondDeck={Boolean(settingsState.isSecondDeck)}
             changeDelay={changeDelay}
-            isDelay2s={isDelay2s}
+            isDelay2s={settingsState.isDelay2s}
             toggleSettings={toggleSettings}
-            isMusicOn={isMusicOn}
+            isMusicOn={settingsState.isMusicOn}
             toggleMusic={toggleMusic}
-            musicVolume={musicVolume}
+            musicVolume={settingsState.musicVolume}
             changeMusicVolume={changeMusicVolume}
-            isSoundsOn={isSoundsOn}
+            isSoundsOn={settingsState.isSoundsOn}
             toggleSounds={toggleSounds}
-            soundsVolume={soundsVolume}
+            soundsVolume={settingsState.soundsVolume}
             changeSoundsVolume={changeSoundsVolume}
           />
         ) : null}
-        {isGameWon ? (
+        {gameState.isGameWon ? (
           <EndGameMessage moves={movesCounter} />
         ) : null}
-        {isGameInfoOpen ? (
+        {modalsState.isGameInfoOpen ? (
           <GameInfo toggleGameInfo={toggleGameInfo} />
         ) : null}
-        {isRecordsOpen ? (
+        {modalsState.isRecordsOpen ? (
           <Records
             toggleRecords={toggleRecords}
             records={records}
@@ -253,12 +277,12 @@ function App() {
         ) : null}
         <div className={`${isDarkOverlayOn ? 'dark-overlay--enabled' : 'dark-overlay'}`}>
           <Board
-            cardsArray={cardsArray}
-            flippedPair={flippedPair}
-            solvedArray={solvedArray}
-            isBoardDisabled={isBoardDisabled}
+            cardsArray={gameState.cardsArray}
+            flippedPair={gameState.flippedPair}
+            solvedArray={gameState.solvedArray}
+            isBoardDisabled={gameState.isBoardDisabled}
             handleClick={handleClick}
-            isSecondBackStyle={isSecondBackStyle}
+            isSecondBackStyle={settingsState.isSecondBackStyle}
           />
         </div>
         <div className="moves__wrapper">
@@ -268,7 +292,7 @@ function App() {
           <button
             type="button"
             onClick={toggleRecords}
-            className={`${isRecordsOpen ? 'btn--active' : ''}`}
+            className={`${modalsState.isRecordsOpen ? 'btn--active' : ''}`}
           >
             Last 10 records
           </button>
@@ -278,14 +302,14 @@ function App() {
           <button
             type="button"
             onClick={toggleSettings}
-            className={`${isSettingsOpen ? 'btn--active' : ''}`}
+            className={`${modalsState.isSettingsOpen ? 'btn--active' : ''}`}
           >
             Settings
           </button>
           <button
             type="button"
             onClick={toggleGameInfo}
-            className={`${isGameInfoOpen ? 'btn--active' : ''}`}
+            className={`${modalsState.isGameInfoOpen ? 'btn--active' : ''}`}
           >
             Hot keys
           </button>
