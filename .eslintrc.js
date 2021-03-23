@@ -8,4 +8,7 @@ module.exports = {
     'linebreak-style': 0,
     'react/jsx-one-expression-per-line': ['off'],
   },
+  env: {
+    browser: 'true',
+  },
 };

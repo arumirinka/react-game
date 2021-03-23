@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import React, { useEffect, useState } from 'react';
 import useSound from 'use-sound';
 import './App.css';
@@ -10,16 +9,13 @@ import Message from './components/Message/Message';
 import GameInfo from './components/GameInfo/GameInfo';
 import Records from './components/Records/Records';
 
-let audioPath = '';
-const musicPath = '../../audio/music.mp3';
-
-let movesCounter = localStorage.getItem('arumiMemoryMoves') ? Number(localStorage.getItem('arumiMemoryMoves')) : 0;
-const storageSolved = localStorage.getItem('arumiMemorySolved') ? JSON.parse(localStorage.getItem('arumiMemorySolved')) : null;
-
 function App() {
+  let audioPath = '';
+  const musicPath = '../../audio/music.mp3';
+
   const [cardsArray, setCardsArray] = useState([]);
   const [flippedPair, setFlippedPair] = useState([]);
-  const [solvedArray, setSolvedArray] = useState(storageSolved || []);
+  const [solvedArray, setSolvedArray] = useState(JSON.parse(localStorage.getItem('arumiMemorySolved')) || []);
   const [isBoardDisabled, setIsBoardDisabled] = useState(false);
   const [isGameWon, setIsGameWon] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -34,6 +30,7 @@ function App() {
   const [soundsVolume, setSoundsVolume] = useState(0.7);
   const [records, setRecords] = useState([]);
   const [isRecordsOpen, setIsRecordsOpen] = useState(false);
+  const [movesCounter, setMovesCounter] = useState(Number(localStorage.getItem('arumiMemoryMoves')) || 0);
 
   const [play, { stop }] = useSound(musicPath, { volume: musicVolume });
 
@@ -62,6 +59,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('arumiMemorySolved', JSON.stringify(solvedArray));
   }, [solvedArray]);
+
+  useEffect(() => {
+    localStorage.setItem('arumiMemoryMoves', movesCounter);
+  }, [movesCounter]);
 
   const toggleFullscreen = () => {
     if (isFullscreen && !document.fullscreenElement) {
@@ -98,7 +99,7 @@ function App() {
   };
 
   const newGame = () => {
-    movesCounter = 0;
+    setMovesCounter(0);
     setIsGameWon(false);
     setCardsArray(createCardsArray(isSecondDeck ? 1 : 0));
     setSolvedArray([]);
@@ -123,14 +124,14 @@ function App() {
     if (!flippedPair.length) {
       setFlippedPair([id]);
       audioPath = '../../audio/flip.mp3';
-      movesCounter += 1;
+      setMovesCounter((prev) => prev + 1);
     } else {
       if (isSameCardClicked(id)) {
         return;
       }
       setIsBoardDisabled(true);
       setFlippedPair([flippedPair[0], id]);
-      movesCounter += 1;
+      setMovesCounter((prev) => prev + 1);
       if (isMatchingPair(id)) {
         audioPath = '../../audio/correct.mp3';
         setSolvedArray([...solvedArray, flippedPair[0], id]);
@@ -213,17 +214,6 @@ function App() {
     window.addEventListener('keypress', handleKeyPress);
     return () => {
       window.removeEventListener('keypress', handleKeyPress);
-    };
-  }, []);
-
-  const handleUnload = () => {
-    localStorage.setItem('arumiMemoryMoves', movesCounter);
-  };
-
-  useEffect(() => {
-    window.addEventListener('beforeunload', handleUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
     };
   }, []);
 
