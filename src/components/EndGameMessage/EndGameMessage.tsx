@@ -6,7 +6,7 @@ type Props = {
   moves: number,
 };
 
-const Message: React.FC<Props> = ({ moves }) => (
+const EndGameMessage: React.FC<Props> = ({ moves }) => (
   <div className="message__wrapper">
     <h3>
       Congratulations!
@@ -17,8 +17,8 @@ const Message: React.FC<Props> = ({ moves }) => (
   </div>
 );
 
-Message.propTypes = {
+EndGameMessage.propTypes = {
   moves: PropTypes.number.isRequired,
 };
 
-export default Message;
+export default EndGameMessage;

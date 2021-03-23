@@ -5,7 +5,7 @@ import Board from './components/Board/Board';
 import createCardsArray from './utils/createCardsArray';
 import Footer from './components/Footer/Footer';
 import Settings from './components/Settings/Settings';
-import Message from './components/Message/Message';
+import EndGameMessage from './components/EndGameMessage/EndGameMessage';
 import GameInfo from './components/GameInfo/GameInfo';
 import Records from './components/Records/Records';
 
@@ -242,7 +242,7 @@ function App() {
           />
         ) : null}
         {isGameWon ? (
-          <Message moves={movesCounter} />
+          <EndGameMessage moves={movesCounter} />
         ) : null}
         {isGameInfoOpen ? (
           <GameInfo toggleGameInfo={toggleGameInfo} />
