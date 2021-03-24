@@ -1,0 +1,50 @@
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.main__wrapper {
+  flex-grow: 1;
+}
+
+.dark-overlay--enabled {
+  pointer-events: none;
+  background-color: #c2c2c255;
+  filter: grayscale(70%);
+}
+
+.moves__wrapper {
+  margin-bottom: 5px;
+}
+
+.moves__span {
+  margin-right: 8px;
+}
+
+button {
+  border: 1px solid #644444;
+  padding: 1px 5px;
+  margin: 0 3px;
+  background: #faebd7;
+  transition: background 0.2s;
+}
+
+.btn--active,
+button:active {
+  background-color: #e9967a;
+  transition: background 0.2s;
+}
+
+button:hover {
+  cursor: pointer;
+  background-color: #f0bdac;
+  transition: background 0.2s;
+}
+
+ol {
+  padding-left: 10px;
+}
