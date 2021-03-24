@@ -9,6 +9,8 @@ import EndGameMessage from './components/EndGameMessage/EndGameMessage';
 import GameInfo from './components/GameInfo/GameInfo';
 import Records from './components/Records/Records';
 
+const savedSettings = JSON.parse(localStorage.getItem('arumiMemorySettings')) || null;
+
 function App() {
   const [gameState, setGameState] = useState({
     cardsArray: [],
@@ -19,13 +21,13 @@ function App() {
   });
 
   const [settingsState, setSettingsState] = useState({
-    isSecondBackStyle: false,
-    isSecondDeck: '',
-    isDelay2s: false,
-    isMusicOn: false,
-    musicVolume: 0.5,
-    isSoundsOn: true,
-    soundsVolume: 0.7,
+    isSecondBackStyle: savedSettings ? Boolean(savedSettings.isSecondBackStyle) : false,
+    isSecondDeck: savedSettings ? Boolean(savedSettings.isSecondDeck) : false,
+    isDelay2s: savedSettings ? Boolean(savedSettings.isDelay2s) : false,
+    isMusicOn: savedSettings ? Boolean(savedSettings.isMusicOn) : false,
+    musicVolume: savedSettings ? Number(savedSettings.musicVolume) || 0.5 : 0.5,
+    isSoundsOn: savedSettings ? Boolean(savedSettings.isSoundsOn) : true,
+    soundsVolume: savedSettings ? Number(savedSettings.soundsVolume) || 0.7 : 0.7,
   });
 
   const [modalsState, setModalsState] = useState({
@@ -35,7 +37,7 @@ function App() {
   });
 
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [records, setRecords] = useState([]);
+  const [records, setRecords] = useState(JSON.parse(localStorage.getItem('arumiMemoryRecords')) || []);
   const [movesCounter, setMovesCounter] = useState(Number(localStorage.getItem('arumiMemoryMoves')) || 0);
 
   const [play, { stop }] = useSound('../../audio/music.mp3', {
@@ -70,8 +72,16 @@ function App() {
   }, [gameState.solvedArray]);
 
   useEffect(() => {
+    localStorage.setItem('arumiMemorySettings', JSON.stringify(settingsState));
+  }, [settingsState]);
+
+  useEffect(() => {
     localStorage.setItem('arumiMemoryMoves', movesCounter);
   }, [movesCounter]);
+
+  useEffect(() => {
+    localStorage.setItem('arumiMemoryRecords', JSON.stringify(records));
+  }, [records]);
 
   const toggleFullscreen = () => {
     if (isFullscreen && !document.fullscreenElement) {
@@ -103,23 +113,25 @@ function App() {
     checkWin();
   }, [gameState.solvedArray]);
 
-  const newGame = () => {
+  const newGame = (deckNum) => {
+    let deckNumber = 0;
+    if (deckNum && deckNum === 'first') {
+      deckNumber = 0;
+    } else if (deckNum && deckNum === 'second') {
+      deckNumber = 1;
+    } else {
+      deckNumber = settingsState.isSecondDeck ? 1 : 0;
+    }
     setMovesCounter(0);
     setGameState({
       ...gameState,
-      cardsArray: createCardsArray(settingsState.isSecondDeck ? 1 : 0),
+      cardsArray: createCardsArray(deckNumber),
       solvedArray: [],
       flippedPair: [],
       isBoardDisabled: false,
       isGameWon: false,
     });
   };
-
-  useEffect(() => {
-    if (settingsState.isSecondDeck !== '') {
-      newGame();
-    }
-  }, [settingsState.isSecondDeck]);
 
   const isSameCardClicked = (id) => gameState.flippedPair[0] === id;
 
@@ -191,6 +203,7 @@ function App() {
 
   const changeDeck = (isDeck2) => {
     setSettingsState({ ...settingsState, isSecondDeck: isDeck2 });
+    newGame(isDeck2 ? 'second' : 'first');
   };
 
   const changeDelay = (isDelay2Sec) => {
@@ -249,7 +262,7 @@ function App() {
             changeBackStyle={changeBackStyle}
             isBackStyle2={settingsState.isSecondBackStyle}
             changeDeck={changeDeck}
-            isSecondDeck={Boolean(settingsState.isSecondDeck)}
+            isSecondDeck={settingsState.isSecondDeck}
             changeDelay={changeDelay}
             isDelay2s={settingsState.isDelay2s}
             toggleSettings={toggleSettings}
