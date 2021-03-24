@@ -197,17 +197,13 @@ function App() {
     setIsFullscreen(!isFullscreen);
   };
 
-  const changeBackStyle = (backStyle) => {
-    setSettingsState({ ...settingsState, isSecondBackStyle: backStyle });
+  const changeBackStyle = (e) => {
+    setSettingsState({ ...settingsState, isSecondBackStyle: e.target.checked });
   };
 
   const changeDeck = (isDeck2) => {
     setSettingsState({ ...settingsState, isSecondDeck: isDeck2 });
     newGame(isDeck2 ? 'second' : 'first');
-  };
-
-  const changeDelay = (isDelay2Sec) => {
-    setSettingsState({ ...settingsState, isDelay2s: isDelay2Sec });
   };
 
   const toggleMusic = (isMusicOnChecked) => {
@@ -261,7 +257,7 @@ function App() {
           <Settings
             changeBackStyle={changeBackStyle}
             changeDeck={changeDeck}
-            changeDelay={changeDelay}
+            changeDelay={(e) => setSettingsState({ ...settingsState, isDelay2s: e.target.checked })}
             toggleSettings={toggleSettings}
             toggleMusic={toggleMusic}
             changeMusicVolume={changeMusicVolume}

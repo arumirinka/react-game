@@ -13,9 +13,9 @@ type SettingsState = {
 };
 
 type Props = {
-  changeBackStyle: Function,
+  changeBackStyle: React.ChangeEventHandler<HTMLInputElement>,
   changeDeck: Function,
-  changeDelay: Function,
+  changeDelay: React.ChangeEventHandler<HTMLInputElement>,
   toggleSettings: React.MouseEventHandler<HTMLButtonElement> | undefined,
   toggleMusic: Function,
   changeMusicVolume: Function,
@@ -28,16 +28,8 @@ const Settings: React.FC<Props> = ({
   changeBackStyle, changeDeck, changeDelay, toggleSettings, toggleMusic, changeMusicVolume,
   toggleSounds, changeSoundsVolume, settingsState,
 }) => {
-  const handleBackChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    changeBackStyle(e.target.checked);
-  };
-
   const handleDeckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     changeDeck(e.target.checked);
-  };
-
-  const handleDelayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    changeDelay(e.target.checked);
   };
 
   const handleMusicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +60,7 @@ const Settings: React.FC<Props> = ({
             type="checkbox"
             className="checkbox_input"
             id="back"
-            onChange={handleBackChange}
+            onChange={changeBackStyle}
             checked={settingsState.isSecondBackStyle}
           />
           <span className="switch-slider" />
@@ -104,7 +96,7 @@ const Settings: React.FC<Props> = ({
             type="checkbox"
             className="checkbox_input"
             id="delayTime"
-            onChange={handleDelayChange}
+            onChange={changeDelay}
             checked={settingsState.isDelay2s}
           />
           <span className="switch-slider" />
