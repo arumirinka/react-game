@@ -2,28 +2,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './settings.css';
 
-type Props = {
-  changeBackStyle: Function,
-  isBackStyle2: boolean,
-  changeDeck: Function,
+type SettingsState = {
+  isSecondBackStyle: boolean,
   isSecondDeck: boolean,
-  changeDelay: Function,
   isDelay2s: boolean,
-  toggleSettings: React.MouseEventHandler<HTMLButtonElement> | undefined,
-  toggleMusic: Function,
   isMusicOn: boolean,
   musicVolume: number,
-  changeMusicVolume: Function,
   isSoundsOn: boolean,
-  toggleSounds: Function,
   soundsVolume: number,
+};
+
+type Props = {
+  changeBackStyle: Function,
+  changeDeck: Function,
+  changeDelay: Function,
+  toggleSettings: React.MouseEventHandler<HTMLButtonElement> | undefined,
+  toggleMusic: Function,
+  changeMusicVolume: Function,
+  toggleSounds: Function,
   changeSoundsVolume: Function,
+  settingsState: SettingsState,
 };
 
 const Settings: React.FC<Props> = ({
-  changeBackStyle, isBackStyle2, changeDeck, isSecondDeck, changeDelay, isDelay2s, toggleSettings,
-  toggleMusic, isMusicOn, musicVolume, changeMusicVolume, isSoundsOn, toggleSounds, soundsVolume,
-  changeSoundsVolume,
+  changeBackStyle, changeDeck, changeDelay, toggleSettings, toggleMusic, changeMusicVolume,
+  toggleSounds, changeSoundsVolume, settingsState,
 }) => {
   const handleBackChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     changeBackStyle(e.target.checked);
@@ -66,7 +69,7 @@ const Settings: React.FC<Props> = ({
             className="checkbox_input"
             id="back"
             onChange={handleBackChange}
-            checked={isBackStyle2}
+            checked={settingsState.isSecondBackStyle}
           />
           <span className="switch-slider" />
         </label>
@@ -84,7 +87,7 @@ const Settings: React.FC<Props> = ({
             className="checkbox_input"
             id="front"
             onChange={handleDeckChange}
-            checked={isSecondDeck}
+            checked={settingsState.isSecondDeck}
           />
           <span className="switch-slider" />
         </label>
@@ -102,7 +105,7 @@ const Settings: React.FC<Props> = ({
             className="checkbox_input"
             id="delayTime"
             onChange={handleDelayChange}
-            checked={isDelay2s}
+            checked={settingsState.isDelay2s}
           />
           <span className="switch-slider" />
         </label>
@@ -120,7 +123,7 @@ const Settings: React.FC<Props> = ({
             className="checkbox_input"
             id="music"
             onChange={handleMusicChange}
-            checked={isMusicOn}
+            checked={settingsState.isMusicOn}
           />
           <span className="switch-slider" />
         </label>
@@ -131,7 +134,7 @@ const Settings: React.FC<Props> = ({
       <div className="settings__item">
         <input
           type="range"
-          value={musicVolume * 100}
+          value={settingsState.musicVolume * 100}
           id="music_volume"
           onChange={handleMusicVolumeChange}
         />
@@ -146,7 +149,7 @@ const Settings: React.FC<Props> = ({
             className="checkbox_input"
             id="sounds"
             onChange={handleSoundsChange}
-            checked={isSoundsOn}
+            checked={settingsState.isSoundsOn}
           />
           <span className="switch-slider" />
         </label>
@@ -157,7 +160,7 @@ const Settings: React.FC<Props> = ({
       <div className="settings__item">
         <input
           type="range"
-          value={soundsVolume * 100}
+          value={settingsState.soundsVolume * 100}
           id="sounds_volume"
           onChange={handleSoundsVolumeChange}
         />
@@ -171,20 +174,22 @@ const Settings: React.FC<Props> = ({
 
 Settings.propTypes = {
   changeBackStyle: PropTypes.func.isRequired,
-  isBackStyle2: PropTypes.bool.isRequired,
   changeDeck: PropTypes.func.isRequired,
-  isSecondDeck: PropTypes.bool.isRequired,
   changeDelay: PropTypes.func.isRequired,
-  isDelay2s: PropTypes.bool.isRequired,
   toggleSettings: PropTypes.func.isRequired,
   toggleMusic: PropTypes.func.isRequired,
-  isMusicOn: PropTypes.bool.isRequired,
-  musicVolume: PropTypes.number.isRequired,
   changeMusicVolume: PropTypes.func.isRequired,
-  isSoundsOn: PropTypes.bool.isRequired,
   toggleSounds: PropTypes.func.isRequired,
-  soundsVolume: PropTypes.number.isRequired,
   changeSoundsVolume: PropTypes.func.isRequired,
+  settingsState: PropTypes.shape({
+    isSecondBackStyle: PropTypes.bool.isRequired,
+    isSecondDeck: PropTypes.bool.isRequired,
+    isDelay2s: PropTypes.bool.isRequired,
+    isMusicOn: PropTypes.bool.isRequired,
+    musicVolume: PropTypes.number.isRequired,
+    isSoundsOn: PropTypes.bool.isRequired,
+    soundsVolume: PropTypes.number.isRequired,
+  }).isRequired,
 };
 
 export default Settings;

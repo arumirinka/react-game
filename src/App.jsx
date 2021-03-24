@@ -260,20 +260,14 @@ function App() {
         {modalsState.isSettingsOpen ? (
           <Settings
             changeBackStyle={changeBackStyle}
-            isBackStyle2={settingsState.isSecondBackStyle}
             changeDeck={changeDeck}
-            isSecondDeck={settingsState.isSecondDeck}
             changeDelay={changeDelay}
-            isDelay2s={settingsState.isDelay2s}
             toggleSettings={toggleSettings}
-            isMusicOn={settingsState.isMusicOn}
             toggleMusic={toggleMusic}
-            musicVolume={settingsState.musicVolume}
             changeMusicVolume={changeMusicVolume}
-            isSoundsOn={settingsState.isSoundsOn}
             toggleSounds={toggleSounds}
-            soundsVolume={settingsState.soundsVolume}
             changeSoundsVolume={changeSoundsVolume}
+            settingsState={settingsState}
           />
         ) : null}
         {gameState.isGameWon ? (
